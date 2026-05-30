@@ -975,6 +975,7 @@ TabMain:CreateSection("Primary Farming Scripts")
 
 -- Toggle for Auto Farm
 TabMain:CreateToggle("Auto Farm", false, function(state)
+    _G.AutoFarm = state
     print("Auto Farm set to:", state)
     if state then
         game:GetService("StarterGui"):SetCore("SendNotification", {
@@ -982,14 +983,52 @@ TabMain:CreateToggle("Auto Farm", false, function(state)
             Text = "Auto farm loop initiated.",
             Duration = 2
         })
-        -- Example Game Farm Logic loop
+        
+        -- MAIN LOOP AUTOFARM
         task.spawn(function()
-            while state do
-                -- Inside real script, click detectors are triggered or remote fired here
+            while _G.AutoFarm do
+                task.wait(0.1) -- Jeda antar proses agar tidak crash
+                
                 pcall(function()
-                    -- e.g. game:GetService("ReplicatedStorage").Remotes.KickRemote:FireServer()
+                    local Character = LocalPlayer.Character
+                    local RootPart = Character and Character:FindFirstChild("HumanoidRootPart")
+                    
+                    if RootPart then
+                        ----------------================----------------
+                        -- LANGKAH 1: MAJU SEDIKIT DEKAT BALOK/BOLA
+                        ----------------================----------------
+                        -- Menggunakan LookVector agar karakter maju 3 stud ke arah depan mata dia menghadap
+                        RootPart.CFrame = RootPart.CFrame * CFrame.new(0, 0, -3)
+                        task.wait(0.1) -- Beri waktu karakter selesai bergeser
+                        
+                        ----------------================----------------
+                        -- LANGKAH 2: KLIK TOMBOL TENDANG (UI)
+                        ------------------------------------------------
+                        -- CATATAN: Ganti "KickButton" & "GameGui" sesuai nama asli di Dark Dex kamu
+                        local KickButton = LocalPlayer.PlayerGui:FindFirstChild("GameGui", true) 
+                            and LocalPlayer.PlayerGui.GameGui:FindFirstChild("KickButton", true)
+                        
+                        if KickButton then
+                            firesignal(KickButton.MouseButton1Click)
+                        end
+                        
+                        ----------------================----------------
+                        -- LANGKAH 3: TIMING KEKUATAN (SEMPURNA / PERFECT)
+                        ----------------================----------------
+                        -- Biasanya game tipe ini memunculkan bar penentu kekuatan.
+                        -- Kita deteksi jika tulisan / statusnya berubah menjadi "Perfect" atau "Sempurna"
+                        local BarGui = LocalPlayer.PlayerGui:FindFirstChild("PowerBarGui", true)
+                        local StatusTeks = BarGui and BarGui:FindFirstChild("StatusLabel", true) -- Teks "Sempurna/Buruk"
+                        local TombolHit = BarGui and BarGui:FindFirstChild("HitButton", true) -- Tombol untuk nge-klik pas pas
+                        
+                        if StatusTeks and TombolHit then
+                            -- Skrip akan terus mengklik super cepat HANYA SAAT tulisannya "Perfect" atau "Sempurna"
+                            if string.find(string.lower(StatusTeks.Text), "perfect") or string.find(string.lower(StatusTeks.Text), "sempurna") then
+                                firesignal(TombolHit.MouseButton1Click)
+                            end
+                        end
+                    end
                 end)
-                task.wait(0.2)
             end
         end)
     end
