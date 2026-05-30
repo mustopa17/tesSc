@@ -1,88 +1,64 @@
-local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
 
-local Window = Rayfield:CreateWindow({
-   Name = "mscrip | Kick A Lucky",
-   LoadingTitle = "Loading mscrip UI...",
-   LoadingSubtitle = "by mscrip Team",
-   ConfigurationSaving = {
-      Enabled = true,
-      FolderName = "mscrip_kickalucky",
-      FileName = "config"
-   },
-   Discord = {
-      Enabled = false,
-      Invite = "noinvites",
-      RememberJoins = true
-   },
-   KeySystem = false -- Setel ke true jika ingin pakai sistem key
+local Window = OrionLib:MakeWindow({
+    Name = "mscrip | Kick A Lucky", 
+    HidePremium = false, 
+    SaveConfig = true, 
+    ConfigFolder = "mscrip_delta",
+    IntroText = "mscrip Loading..."
 })
 
--- =================================================================
--- TAB 1: MAIN (Menu Utama sesuai isi gambar Anda)
--- =================================================================
-local MainTab = Window:CreateTab("Main", 4483362458) -- ID Icon korak/home
-
-local InfoParagraph = MainTab:CreateParagraph({
-    Title = "Info", 
-    Content = "Welcome to mscrip! Status: Undetected"
+-- ==========================================
+-- TAB MAIN
+-- ==========================================
+local MainTab = Window:MakeTab({
+    Name = "Main",
+    Icon = "rbxassetid://4483362458"
 })
 
-local FarmToggle = MainTab:CreateToggle({
-   Name = "Auto Farm",
-   CurrentValue = false,
-   Flag = "ToggleAutoFarm", 
-   Callback = function(Value)
-       _G.AutoFarm = Value
-       if Value then
-           print("Auto Farm Diaktifkan")
-           -- Letakkan fungsi/looping Auto Farm Anda di sini
-       else
-           print("Auto Farm Dimatikan")
-       end
-   end,
+MainTab:AddLabel("Info: Welcome to mscrip!")
+
+MainTab:AddToggle({
+    Name = "Auto Farm",
+    Default = false,
+    Callback = function(Value)
+        _G.AutoFarm = Value
+        while _G.AutoFarm do
+            task.wait(0.1)
+            -- Masukkan kode script Auto Farm Anda di sini
+            print("Auto Farming...")
+        end
+    end    
 })
 
-local SnapToggle = MainTab:CreateToggle({
-   Name = "Auto Snap (Rule Builder)",
-   CurrentValue = false,
-   Flag = "ToggleAutoSnap",
-   Callback = function(Value)
-       _G.AutoSnap = Value
-       if Value then
-           print("Auto Snap Diaktifkan")
-           -- Letakkan fungsi Auto Snap Anda di sini
-       else
-           print("Auto Snap Dimatikan")
-       end
-   end,
+MainTab:AddToggle({
+    Name = "Auto Snap (Rule Builder)",
+    Default = false,
+    Callback = function(Value)
+        _G.AutoSnap = Value
+        while _G.AutoSnap do
+            task.wait(0.1)
+            -- Masukkan kode script Auto Snap Anda di sini
+            print("Auto Snapping...")
+        end
+    end    
 })
 
--- =================================================================
--- TAB 2: CONFIG & LAINNYA (Sesuai list menu sebelah kiri gambar)
--- =================================================================
-local ConfigTab = Window:CreateTab("Config", 4483362458)
-local AutoTab = Window:CreateTab("Automatically", 4483362458)
-local MiscTab = Window:CreateTab("Miscellaneous", 4483362458)
+-- ==========================================
+-- TAB LAINNYA (Sesuai Menu Kiri Gambar)
+-- ==========================================
+local ConfigTab = Window:MakeTab({ Name = "Config" })
+local AutoTab = Window:MakeTab({ Name = "Automatically" })
+local MiscTab = Window:MakeTab({ Name = "Miscellaneous" })
+local WebhookTab = Window:MakeTab({ Name = "Webhook" })
 
--- =================================================================
--- TAB 3: WEBHOOK (Menu paling bawah pada gambar)
--- =================================================================
-local WebhookTab = Window:CreateTab("Webhook", 4483362458)
-
-local WebhookInput = WebhookTab:CreateInput({
-   Name = "Discord Webhook URL",
-   PlaceholderText = "Paste url here...",
-   RemoveTextAfterFocusLost = false,
-   Callback = function(Text)
-       _G.WebhookURL = Text
-       print("Webhook disetel ke: " .. Text)
-   end,
+WebhookTab:AddTextbox({
+    Name = "Discord Webhook",
+    Default = "",
+    TextDisappear = false,
+    Callback = function(Text)
+        _G.WebhookURL = Text
+    end
 })
 
--- Notifikasi saat UI berhasil dimuat
-Rayfield:Notify({
-   Title = "mscrip Loaded!",
-   Content = "Enjoy cheating safely with mscrip.",
-   Duration = 5,
-   Image = 4483362458,
-})
+OrionLib:Init()
